@@ -74,14 +74,12 @@ class ScpiInstrument():
             #Check if this is a command (has args) or a query (no args)
             if args:
                 c = "{}{}{}".format(self.command, pre_param_separator, param_separator.join(args)).strip()
-                print("Command: {}".format(c))
                 self.visa_instrument.write(c)
                 return None
             else:
                 c = "{}{}".format(self.command, query_terminator)
-                print("Command: {}".format(c))
                 r = self.visa_instrument.query(c)
-                print("Response: {}".format(r))
+                return tuple(r.strip().split(pre_param_separator)[1].split(param_separator))
         
         def __str__(self):
             return self.command
@@ -122,3 +120,4 @@ class ScpiInstrument():
     def __getattr__(self, name):
         setattr(self, name, self.CommandPart(self, name))
         return getattr(self, name)
+    
